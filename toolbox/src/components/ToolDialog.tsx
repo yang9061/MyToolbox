@@ -21,6 +21,7 @@ export function ToolDialog({ isEdit = false }: ToolDialogProps) {
   const [description, setDescription] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isFetchingIcon, setIsFetchingIcon] = useState(false);
 
   useEffect(() => {
     if (isEdit && editingTool) {
@@ -108,6 +109,9 @@ export function ToolDialog({ isEdit = false }: ToolDialogProps) {
       return;
     }
 
+    setIsFetchingIcon(true);
+    setErrors((prev) => ({ ...prev, icon: '正在获取图标...' }));
+
     try {
       const domain = new URL(url).hostname;
       const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
@@ -121,13 +125,16 @@ export function ToolDialog({ isEdit = false }: ToolDialogProps) {
           setIcon(result);
           setIconPreview(result);
           setErrors((prev) => ({ ...prev, icon: '' }));
+          setIsFetchingIcon(false);
         };
         reader.readAsDataURL(blob);
       } else {
         setErrors((prev) => ({ ...prev, icon: '无法获取网站图标' }));
+        setIsFetchingIcon(false);
       }
     } catch (error) {
       setErrors((prev) => ({ ...prev, icon: '获取图标失败' }));
+      setIsFetchingIcon(false);
     }
   };
 
@@ -248,6 +255,8 @@ export function ToolDialog({ isEdit = false }: ToolDialogProps) {
                   <Button
                     type="button"
                     onClick={handleGetFavicon}
+                    disabled={isFetchingIcon}
+                    loading={isFetchingIcon}
                   >
                     自动获取
                   </Button>
