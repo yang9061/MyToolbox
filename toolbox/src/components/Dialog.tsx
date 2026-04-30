@@ -7,9 +7,10 @@ interface DialogProps {
   title: string;
   children: React.ReactNode;
   maxWidth?: string;
+  showCloseButton?: boolean;
 }
 
-export function Dialog({ isOpen, onClose, title, children, maxWidth = 'max-w-md' }: DialogProps) {
+export function Dialog({ isOpen, onClose, title, children, maxWidth = 'max-w-md', showCloseButton = true }: DialogProps) {
   const [isAnimating, setIsAnimating] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -74,13 +75,15 @@ export function Dialog({ isOpen, onClose, title, children, maxWidth = 'max-w-md'
           <h2 id="dialog-title" className="text-lg font-semibold">
             {title}
           </h2>
-          <button
-            onClick={onClose}
-            className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
-            aria-label="关闭"
-          >
-            <X size={20} />
-          </button>
+          {showCloseButton && (
+            <button
+              onClick={onClose}
+              className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+              aria-label="关闭"
+            >
+              <X size={20} />
+            </button>
+          )}
         </div>
         <div className="p-4">{children}</div>
       </div>

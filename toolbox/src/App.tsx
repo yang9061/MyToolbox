@@ -8,6 +8,8 @@ import { CategoryDialog } from './components/CategoryDialog';
 import { ExportDialog } from './components/ExportDialog';
 import { ImportDialog } from './components/ImportDialog';
 import { ConfirmDialog } from './components/ConfirmDialog';
+import { SettingsDialog } from './components/SettingsDialog';
+import { AutoBackupPrompt } from './components/AutoBackupPrompt';
 import { Toast } from './components/Toast';
 
 function AppContent() {
@@ -28,6 +30,8 @@ function AppContent() {
       <ExportDialog />
       <ImportDialog />
       <ConfirmDialog />
+      <SettingsDialog />
+      <AutoBackupPrompt />
       <Toast />
     </div>
   );

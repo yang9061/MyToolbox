@@ -38,7 +38,7 @@ export interface PresetTool {
   offlineFileName?: string;
 }
 
-export type DialogType = 'add' | 'edit' | 'category' | 'export' | 'import' | 'confirm' | null;
+export type DialogType = 'add' | 'edit' | 'category' | 'export' | 'import' | 'confirm' | 'settings' | null;
 
 export interface ConfirmDialogProps {
   title: string;

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Download, Upload, Wrench } from 'lucide-react';
+import { Plus, Download, Upload, Wrench, Settings } from 'lucide-react';
 import { SearchBar } from './SearchBar';
 import { ThemeToggle } from './ThemeToggle';
 import { useApp } from '../context/AppContext';
@@ -92,6 +92,14 @@ export function Header() {
             >
               <Upload size={18} />
               <span>导入</span>
+            </button>
+            <button
+              onClick={() => setCurrentDialog('settings')}
+              className="hidden sm:flex items-center gap-2 px-3 py-2 text-sm transition-colors duration-300 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-800 hover:text-gray-900 hover:bg-gray-100 rounded text-gray-600"
+              title="设置"
+            >
+              <Settings size={18} />
+              <span>设置</span>
             </button>
             <button
               onClick={() => setCurrentDialog('add')}

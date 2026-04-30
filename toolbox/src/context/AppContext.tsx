@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, useCallback, ReactNode 
 import { Tool, Category, DialogType } from '../types';
 import { db, initializeDatabase } from '../db/database';
 import { v4 as uuidv4 } from 'uuid';
+import { useAutoBackup } from '../hooks/useAutoBackup';
 
 interface AppState {
   tools: Tool[];
@@ -14,6 +15,9 @@ interface AppState {
   toastMessage: string | null;
   toastType: 'success' | 'error' | 'warning' | 'info';
   isDarkMode: boolean;
+  isAutoBackupEnabled: boolean;
+  backupPath: string | null;
+  lastBackupTime: number | null;
 }
 
 interface AppContextType extends AppState {
@@ -35,6 +39,9 @@ interface AppContextType extends AppState {
   importData: (data: { tools: Tool[]; categories: Category[] }) => Promise<{ imported: number; skipped: number }>;
   filteredTools: () => Tool[];
   toggleTheme: () => void;
+  enableAutoBackup: () => Promise<boolean>;
+  disableAutoBackup: () => void;
+  restoreFromBackup: () => Promise<{ tools: Tool[]; categories: Category[] } | null>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -53,6 +60,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const saved = localStorage.getItem('isDarkMode');
     return saved !== null ? JSON.parse(saved) : false;
   });
+
+  const { backupState, enableAutoBackup, disableAutoBackup, restoreFromBackup } = useAutoBackup(tools, categories);
+  const [isAutoBackupEnabled, setIsAutoBackupEnabled] = useState(false);
+  const [backupPath, setBackupPath] = useState<string | null>(null);
+  const [lastBackupTime, setLastBackupTime] = useState<number | null>(null);
+
+  useEffect(() => {
+    setIsAutoBackupEnabled(backupState.isEnabled);
+    setBackupPath(backupState.backupPath);
+    setLastBackupTime(backupState.lastBackupTime);
+  }, [backupState]);
 
   useEffect(() => {
     if (isDarkMode) {
@@ -339,6 +357,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
         importData,
         filteredTools,
         toggleTheme,
+        isAutoBackupEnabled,
+        backupPath,
+        lastBackupTime,
+        enableAutoBackup,
+        disableAutoBackup,
+        restoreFromBackup,
       }}
     >
       {children}

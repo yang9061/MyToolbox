@@ -1,6 +1,6 @@
 import Dexie, { Table } from 'dexie';
 import { Tool, Category } from '../types';
-import { DEFAULT_CATEGORIES, PRESET_TOOLS } from '../data/presetTools';
+import { loadPresetConfig } from '../data/presetLoader';
 
 class ToolboxDatabase extends Dexie {
   tools!: Table<Tool, string>;
@@ -13,16 +13,49 @@ class ToolboxDatabase extends Dexie {
       tools: 'id, name, categoryId, isFavorite, isOffline, createdAt',
       categories: 'id, name, sortOrder, createdAt',
     });
+
+    this.version(2)
+      .stores({
+        tools: 'id, name, categoryId, isFavorite, isOffline, createdAt',
+        categories: 'id, name, isDefault, sortOrder, createdAt',
+      })
+      .upgrade(async (tx) => {
+        await tx.table('categories').clear();
+        await tx.table('tools').clear();
+      });
+
+    this.version(3)
+      .stores({
+        tools: 'id, name, categoryId, isFavorite, isOffline, createdAt',
+        categories: 'id, name, isDefault, sortOrder, createdAt',
+      })
+      .upgrade(async (tx) => {
+        await tx.table('tools').delete('preset-feishu-cloud-doc');
+        await tx.table('tools').delete('preset-feishu-task');
+      });
   }
 
   async initializeDefaultData(): Promise<void> {
-    const categoryCount = await this.categories.count();
-    if (categoryCount === 0) {
-      await this.categories.bulkAdd(DEFAULT_CATEGORIES);
+    const { categories: presetCategories, tools: presetTools } = await loadPresetConfig();
+
+    const existingCategories = await this.categories.toArray();
+    const existingCategoryIds = new Set(existingCategories.map(c => c.id));
+    const presetCategoryIds = new Set(presetCategories.map(c => c.id));
+    
+    for (const category of presetCategories) {
+      if (!existingCategoryIds.has(category.id)) {
+        await this.categories.add(category);
+      }
+    }
+
+    for (const existing of existingCategories) {
+      if (existing.isDefault && !presetCategoryIds.has(existing.id)) {
+        await this.categories.delete(existing.id);
+      }
     }
 
     const now = Date.now();
-    for (const presetTool of PRESET_TOOLS) {
+    for (const presetTool of presetTools) {
       const existingTool = await this.tools.get(presetTool.id);
       if (!existingTool) {
         await this.tools.add({
