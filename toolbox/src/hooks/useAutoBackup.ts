@@ -60,7 +60,7 @@ export function useAutoBackup(tools: Tool[], categories: Category[]) {
       const handleInfo = JSON.stringify({
         name: fileHandle.name,
       });
-      sessionStorage.setItem(BACKUP_HANDLE_KEY, handleInfo);
+      localStorage.setItem(BACKUP_HANDLE_KEY, handleInfo);
 
       setBackupState({
         isEnabled: true,
@@ -106,7 +106,7 @@ export function useAutoBackup(tools: Tool[], categories: Category[]) {
   }, [saveBackup]);
 
   const disableAutoBackup = useCallback(() => {
-    sessionStorage.removeItem(BACKUP_HANDLE_KEY);
+    localStorage.removeItem(BACKUP_HANDLE_KEY);
     fileHandleRef.current = null;
     setBackupState({
       isEnabled: false,
@@ -144,7 +144,7 @@ export function useAutoBackup(tools: Tool[], categories: Category[]) {
         const handleInfo = JSON.stringify({
           name: handle.name,
         });
-        sessionStorage.setItem(BACKUP_HANDLE_KEY, handleInfo);
+        localStorage.setItem(BACKUP_HANDLE_KEY, handleInfo);
 
         setBackupState({
           isEnabled: true,
@@ -187,7 +187,7 @@ export function useAutoBackup(tools: Tool[], categories: Category[]) {
   }, [tools, categories, backupState.isEnabled, saveBackup]);
 
   useEffect(() => {
-    const storedHandle = sessionStorage.getItem(BACKUP_HANDLE_KEY);
+    const storedHandle = localStorage.getItem(BACKUP_HANDLE_KEY);
     if (storedHandle) {
       try {
         const info = JSON.parse(storedHandle);
