@@ -17,7 +17,8 @@
     { "id": "cat-efficiency", "name": "效率工具", "sortOrder": 15 },
     { "id": "cat-community", "name": "PM社区", "sortOrder": 16 },
     { "id": "cat-dev", "name": "开发相关", "sortOrder": 17 },
-    { "id": "cat-github-skills", "name": "GitHub PM 相关 Skills 与项目", "sortOrder": 18 }
+    { "id": "cat-github-skills", "name": "GitHub PM 相关 Skills 与项目", "sortOrder": 18 },
+    { "id": "cat-other", "name": "其它", "sortOrder": 999 }
   ],
   "tools": [
     { "id": "preset-modao", "name": "墨刀", "url": "https://modao.cc/", "icon": "https://modao.cc/favicon.ico", "description": "国内领先的在线原型设计工具，支持团队协作、交互原型、高保真设计，提供丰富的组件库和模板", "categoryId": "cat-prototype" },

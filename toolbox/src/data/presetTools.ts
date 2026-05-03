@@ -19,6 +19,7 @@ export const DEFAULT_CATEGORIES: Category[] = [
   { id: 'cat-community', name: 'PM社区', isDefault: true, sortOrder: 16, createdAt: 0 },
   { id: 'cat-dev', name: '开发相关', isDefault: true, sortOrder: 17, createdAt: 0 },
   { id: 'cat-github-skills', name: 'GitHub PM 相关 Skills 与项目', isDefault: true, sortOrder: 18, createdAt: 0 },
+  { id: 'cat-other', name: '其它', isDefault: true, sortOrder: 999, createdAt: 0 },
 ];
 
 export const PRESET_TOOLS: PresetTool[] = [

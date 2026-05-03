@@ -14,7 +14,7 @@ export function Footer() {
 
   return (
     <footer className="sticky bottom-0 z-30 border-t transition-colors duration-300 dark:bg-gray-900/35 dark:border-gray-700 bg-white/35 backdrop-blur-md border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 py-3">
+      <div className="h-[50px] max-w-7xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between text-xs transition-colors duration-300 dark:text-gray-400 text-gray-600">
           <div>
             {categoryLabel && (

@@ -28,7 +28,8 @@ interface AppContextType extends AppState {
   toggleFavorite: (id: string) => Promise<void>;
   addCategory: (name: string) => Promise<void>;
   updateCategory: (id: string, name: string) => Promise<void>;
-  deleteCategory: (id: string) => Promise<void>;
+  deleteCategory: (id: string, deleteTools?: boolean) => Promise<void>;
+  getToolsCountInCategory: (categoryId: string) => number;
   reorderCategories: (id: string, newIndex: number) => Promise<void>;
   setSelectedCategoryId: (id: string | null) => void;
   setSearchKeyword: (keyword: string) => void;
@@ -182,21 +183,39 @@ export function AppProvider({ children }: { children: ReactNode }) {
     showToast('分类更新成功', 'success');
   };
 
-  const deleteCategory = async (id: string) => {
+  const deleteCategory = async (id: string, deleteTools: boolean = false) => {
     const category = categories.find((c) => c.id === id);
-    if (!category || category.isDefault) {
-      showToast('默认分类不能删除', 'warning');
+    if (!category) {
       return;
     }
+    
     const uncategorizedId = 'cat-other';
-    await db.tools.where('categoryId').equals(id).modify({ categoryId: uncategorizedId });
-    setTools((prev) => prev.map((t) => (t.categoryId === id ? { ...t, categoryId: uncategorizedId } : t)));
+    if (id === uncategorizedId) {
+      showToast('「其它」分类不能删除，作为工具的兜底分类', 'warning');
+      return;
+    }
+    
+    if (deleteTools) {
+      const toolsInCategory = tools.filter((t) => t.categoryId === id);
+      for (const tool of toolsInCategory) {
+        await db.tools.delete(tool.id);
+      }
+      setTools((prev) => prev.filter((t) => t.categoryId !== id));
+    } else {
+      await db.tools.where('categoryId').equals(id).modify({ categoryId: uncategorizedId });
+      setTools((prev) => prev.map((t) => (t.categoryId === id ? { ...t, categoryId: uncategorizedId } : t)));
+    }
+    
     await db.categories.delete(id);
     setCategories((prev) => prev.filter((c) => c.id !== id));
     if (selectedCategoryId === id) {
       setSelectedCategoryId(null);
     }
     showToast('分类已删除', 'success');
+  };
+
+  const getToolsCountInCategory = (categoryId: string): number => {
+    return tools.filter((t) => t.categoryId === categoryId).length;
   };
 
   const reorderCategories = async (id: string, newIndex: number) => {
@@ -347,6 +366,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         addCategory,
         updateCategory,
         deleteCategory,
+        getToolsCountInCategory,
         reorderCategories,
         setSelectedCategoryId,
         setSearchKeyword,

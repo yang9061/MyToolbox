@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import { AppProvider } from './context/AppContext';
 import { Header } from './components/Header';
-import { CategoryTabs } from './components/CategoryTabs';
+import { Sidebar } from './components/Sidebar';
 import { ToolGrid } from './components/ToolGrid';
 import { Footer } from './components/Footer';
 import { ToolDialog } from './components/ToolDialog';
@@ -13,16 +14,20 @@ import { AutoBackupPrompt } from './components/AutoBackupPrompt';
 import { Toast } from './components/Toast';
 
 function AppContent() {
+  const [sidebarWidth, setSidebarWidth] = useState(224);
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      <div className="max-w-7xl mx-auto w-full px-4 py-3 bg-white dark:bg-gray-800">
-        <CategoryTabs />
+    <div className="min-h-screen flex">
+      <Sidebar onWidthChange={setSidebarWidth} />
+      <div className="flex-1 min-h-screen transition-all duration-300" style={{ marginLeft: `${sidebarWidth}px` }}>
+        <div className="flex flex-col min-h-screen">
+          <Header />
+          <main className="flex-1 px-6 py-6 bg-gray-50 dark:bg-gray-900">
+            <ToolGrid />
+          </main>
+          <Footer />
+        </div>
       </div>
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-6 bg-gray-50 dark:bg-gray-900">
-        <ToolGrid />
-      </main>
-      <Footer />
 
       <ToolDialog />
       <ToolDialog isEdit />
